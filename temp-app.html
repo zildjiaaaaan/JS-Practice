@@ -7,24 +7,37 @@
     <style>
         #result:not(:empty) {
             background-color: #f7f7f7;
-            border: 1px solid red;
+            border: 1px solid #e5e5e5;
             margin: 1em 0;
             padding: 1em;
         }
     </style>
 </head>
 <body>
-    <label for="temp">Enter Text</label>
+    <label for="temp">Enter Your Temperature</label>
     <input type="text" id="temp">
+
+    <label>
+        <input type="radio" name="units" value="celsius" checked> To Celsius
+    </label>
+
+    <label>
+        <input type="radio" name="units" value="fahrenheit"> To Fahrenheit
+    </label>
 
     <div id="result" aria-live="polite"></div>
 </body>
 <script>
     let temp = document.querySelector('#temp');
     let result = document.querySelector('#result');
+    //(TEMP_IN_FAHRENHEIT - 32) * 5 / 9
+    //(TEMP_IN_CELSIUS * 9 / 5) + 32
 
     temp.addEventListener('keyup', function(event) {
-        result.textContent = temp.value;
+        let celsius = (parseFloat(temp.value) - 32) * 5 / 9;
+        result.textContent = "Celsius: " + celsius.toFixed(1);
     });
+
+
 </script>
 </html>
