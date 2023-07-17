@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature App</title>
+    <style>
+        #result:not(:empty) {
+            background-color: #f7f7f7;
+            border: 1px solid #e5e5e5;
+            margin: 1em 0;
+            padding: 1em;
+        }
+    </style>
+</head>
+<body>
+    <label for="temp">Enter Text</label>
+    <input type="text" id="temp">
+
+    <div id="result" aria-live="polite"></div>
+</body>
+<script>
+    let temp = document.querySelector('#temp');
+    let result = document.querySelector('#result');
+
+    temp.addEventListener('keyup', function(event) {
+        // console.log(temp.value);
+        result.textContent = temp.value;
+    });
+
+
+
+    // btn.addEventListener('click', function (event) {
+    //     console.log(event); // The event details
+    //     console.log(event.target); // The clicked element
+    // });
+</script>
+</html>
