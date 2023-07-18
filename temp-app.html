@@ -54,6 +54,8 @@
 
     // Get units and print
     function printOutput(event) {
+
+        // check what if the elements was involved of the event
         if (event.target.matches('#temp') || event.target.matches('[name="units"]')) {
 
             // Convert the temperature
@@ -64,6 +66,7 @@
         }
     }
 
+    // Listen to all input event inside document
     document.addEventListener('input', printOutput);
 
 </script>

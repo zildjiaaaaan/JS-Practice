@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Visibility</title>
+</head>
+<body>
+    <form>
+        <div>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" id="username">
+        </div>
+    
+        <div>
+            <label for="password">Password</label><br>
+            <input type="password" name="password" id="password">
+        </div>
+    
+        <div>
+            <label for="show-password">
+                <input type="checkbox" name="show-passwords" id="show-password">
+                Show password
+            </label>
+        </div>
+    
+        <p>
+            <button type="submit">Log In</button>
+        </p>
+    </form>
+</body>
+<script>
+    let password = document.querySelector('#password');
+    let show_pass = document.querySelector('#show-password');
+
+    show_pass.addEventListener('input', function(event) {
+        if (show_pass.checked) {
+            password.type = "text";
+        } else {
+            password.type = "password";
+        }
+    });
+
+</script>
+</html>
