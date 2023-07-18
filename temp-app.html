@@ -14,33 +14,57 @@
     </style>
 </head>
 <body>
-    <label for="temp">Enter Your Temperature</label>
-    <input type="text" id="temp">
-
-    <label>
-        <input type="radio" name="units" value="celsius" checked> To Celsius
-    </label>
-
-    <label>
-        <input type="radio" name="units" value="fahrenheit"> To Fahrenheit
-    </label>
-
-    <div id="result" aria-live="polite"></div>
+    <div style="margin: 0 auto; width: 80%;">
+        <h1>Temperature Converter</h1>
+        <label for="temp">Enter Your Temperature</label>
+        <input type="text" id="temp">
+        <label>
+            <input type="radio" name="units" value="celsius" checked> To Celsius
+        </label>
+        <label>
+            <input type="radio" name="units" value="fahrenheit"> To Fahrenheit
+        </label>
+        <div id="result" aria-live="polite"></div>
+    </div>
 </body>
 <script>
-    let temp = document.querySelector('#temp');
-    let result = document.querySelector('#result');
-
     //(TEMP_IN_FAHRENHEIT - 32) * 5 / 9
     //(TEMP_IN_CELSIUS * 9 / 5) + 32
 
-    temp.addEventListener('keyup', function(event) {
-        let op = document.querySelector('input[name="units"]:checked').value;
-        let value = parseFloat(temp.value);        
-        let output = (op == "celsius") ? (value - 32) * 5 / 9 : (value * 9 / 5) + 32;
-        result.textContent = "Output: " + output.toFixed(1);
-    });
+    let temp = document.querySelector('#temp');
+    let result = document.querySelector('#result');
 
+    // Get operator
+    function getOperator() {
+        let ops = document.querySelectorAll('input[name="units"]');
+        for (let op of ops) {
+            if (op.checked) return op.value;
+        }
+    }
+
+    // Convert
+    function convert(temp, unit) {
+        if (temp == '') return 0;
+        if (unit === "celsius") {
+            return (temp - 32) * 5 / 9;
+        } else {
+            return (temp * 9 / 5) + 32;
+        }
+    }
+
+    // Get units and print
+    function printOutput(event) {
+        if (event.target.matches('#temp') || event.target.matches('[name="units"]')) {
+
+            // Convert the temperature
+            let units = getOperator();
+            let converted = convert(temp.value, units);
+            result.textContent = `${converted.toFixed(1)} degrees ${units}`;
+
+        }
+    }
+
+    document.addEventListener('input', printOutput);
 
 </script>
 </html>
