@@ -30,12 +30,15 @@
 <script>
     let temp = document.querySelector('#temp');
     let result = document.querySelector('#result');
+
     //(TEMP_IN_FAHRENHEIT - 32) * 5 / 9
     //(TEMP_IN_CELSIUS * 9 / 5) + 32
 
     temp.addEventListener('keyup', function(event) {
-        let celsius = (parseFloat(temp.value) - 32) * 5 / 9;
-        result.textContent = "Celsius: " + celsius.toFixed(1);
+        let op = document.querySelector('input[name="units"]:checked').value;
+        let value = parseFloat(temp.value);        
+        let output = (op == "celsius") ? (value - 32) * 5 / 9 : (value * 9 / 5) + 32;
+        result.textContent = "Output: " + output.toFixed(1);
     });
 
 
