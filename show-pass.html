@@ -33,23 +33,13 @@
     let passwords = document.querySelectorAll('input[type="password"]');
     let show_pass = document.querySelector('#show-passwords');
 
-    function showPass() {
-        for (let password of passwords) {
-            password.type = "text";
-        }
-    }
-
-    function hidePass() {
-        passwords.forEach(password => {
-            password.type = "password";
-        });
-    }
-
     show_pass.addEventListener('input', function(event) {
-        if (show_pass.checked) {
-            showPass()
-        } else {
-            hidePass()
+        for (let password of passwords) {
+            if (show_pass.checked) {
+                password.type = "text";
+            } else {
+                password.type = "password";
+            }
         }
     });
 
