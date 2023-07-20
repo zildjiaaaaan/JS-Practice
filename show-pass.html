@@ -6,42 +6,93 @@
     <title>Password Visibility</title>
 </head>
 <body>
-    <form>
-        <div>
-            <label for="current-password">Current Password</label>
-            <input type="password" name="current-password" id="current-password">
-        </div>
-    
-        <div>
-            <label for="new-password">New Password</label>
-            <input type="password" name="new-password" id="new-password">
-        </div>
-    
-        <div>
-            <label for="show-passwords">
-                <input type="checkbox" name="show-passwords" id="show-passwords">
-                Show passwords
-            </label>
-        </div>
-    
-        <p>
-            <button type="submit">Change Passwords</button>
-        </p>
-    </form>
+    <h2>Change Username</h2>
+<p>Enter your username and password to change your username.</p>
+
+<form>
+	<div>
+		<label for="username">Username</label>
+		<input type="text" name="username" id="username">
+	</div>
+
+	<div>
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+	</div>
+
+	<div>
+		<label for="show-password">
+			<input type="checkbox" name="show-password" id="show-password">
+			Show password
+		</label>
+	</div>
+
+	<p>
+		<button type="submit">Change Username</button>
+	</p>
+</form>
+
+
+<h2>Change Password</h2>
+<p>Enter your current password and new password below.</p>
+
+<form>
+	<div>
+		<label for="current-password">Current Password</label>
+		<input type="password" name="current-password" id="current-password">
+	</div>
+
+	<div>
+		<label for="new-password">New Password</label>
+		<input type="password" name="new-password" id="new-password">
+	</div>
+
+	<div>
+		<label for="show-passwords">
+			<input type="checkbox" name="show-passwords" id="show-passwords">
+			Show passwords
+		</label>
+	</div>
+
+	<p>
+		<button type="submit">Change Passwords</button>
+	</p>
+</form>
 </body>
 <script>
     let passwords = document.querySelectorAll('input[type="password"]');
     let show_pass = document.querySelector('#show-passwords');
 
-    show_pass.addEventListener('input', function(event) {
+    function checkPassInput() {
         for (let password of passwords) {
+            if (password.hasAttribute('id') == 'password') {
+                showPass('single');
+                return;
+            } else {
+                showPass('double');
+            }
+        }
+    }
+
+    function showPass(total_input) {
+        if (condition) {
             if (show_pass.checked) {
                 password.type = "text";
             } else {
                 password.type = "password";
             }
         }
-    });
+    }
+
+    // show_pass.addEventListener('input', function(event) {
+    //     for (let password of passwords) {
+    //         if (show_pass.checked) {
+    //             password.type = "text";
+    //         } else {
+    //             password.type = "password";
+    //         }
+    //     }
+    // });
 
 </script>
 </html>
