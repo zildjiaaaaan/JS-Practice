@@ -17,7 +17,7 @@
 
 	<div>
 		<label for="password">Password</label>
-		<input type="password" name="password" id="password">
+		<input type="password" name="password" id="password" data-pw="show-password">
 	</div>
 
 	<div>
@@ -39,12 +39,12 @@
 <form>
 	<div>
 		<label for="current-password">Current Password</label>
-		<input type="password" name="current-password" id="current-password">
+		<input type="password" name="current-password" id="current-password" data-pw="show-passwords">
 	</div>
 
 	<div>
 		<label for="new-password">New Password</label>
-		<input type="password" name="new-password" id="new-password">
+		<input type="password" name="new-password" id="new-password" data-pw="show-passwords">
 	</div>
 
 	<div>
@@ -61,38 +61,34 @@
 </body>
 <script>
     let passwords = document.querySelectorAll('input[type="password"]');
-    let show_pass = document.querySelector('#show-passwords');
+	// let toggles = document.querySelectorAll('input[type="checkbox"]');
 
-    function checkPassInput() {
-        for (let password of passwords) {
-            if (password.hasAttribute('id') == 'password') {
-                showPass('single');
-                return;
-            } else {
-                showPass('double');
-            }
-        }
-    }
+	function showPass(password, toggle) {
+		if (toggle.checked) {
+			password.type = "text";
+		} else {
+			password.type = "password";
+		}
+	}
 
-    function showPass(total_input) {
-        if (condition) {
-            if (show_pass.checked) {
-                password.type = "text";
-            } else {
-                password.type = "password";
-            }
-        }
-    }
+	function getToggle(toggle) {
+		for (let password of passwords) {
+			if (password.getAttribute('data-pw') === toggle.id) {
+				showPass(password, toggle);
+			}
+		}
+	}
 
-    // show_pass.addEventListener('input', function(event) {
-    //     for (let password of passwords) {
-    //         if (show_pass.checked) {
-    //             password.type = "text";
-    //         } else {
-    //             password.type = "password";
-    //         }
-    //     }
-    // });
+	function handleInput(event) {
+		// check if toggle was change
+		let toggle = event.target;
+		if (toggle.matches('#show-password') || toggle.matches('#show-passwords')) {
+			getToggle(toggle);
+		}
+	}
+
+	document.addEventListener('change', handleInput);
+    
 
 </script>
 </html>
