@@ -16,29 +16,54 @@
 </body>
 
 <script>
+    // https://ron-swanson-quotes.herokuapp.com/v2/quotes
+    // set empty array
+    // fetch
+        // check data if not inside array
+            // if true, add
+            // if false, skip
+
     let quote = document.querySelector('#quote');
     let btn = document.querySelector('#get-quote');
+    let temp_quote = '';
+    let quotes = [];
+    
 
+    // get quote
     function setQuote() {
-        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
-            // the api call was successful!
+        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function (response) {
             if (response.ok) {
                 return response.json();
             }
-            // there was an error
-            return Promise.reject(response);
-
+            throw response.status;
         }).then(function (data) {
-            // console.log(data);
-            quote.textContent = data;
+            temp_quote = data;
         }).catch(function (err) {
-            console.warn('Something went wrong.', err);
+            quote.textContent = 'ERROR: Something went wrong';
         });
     }
 
-    setQuote();
+    function setTempArr() {
+        let len = quotes.length;
+        if (len) {
+            return quotes.slice(len-50, len);
+        }
+    }
 
-    btn.addEventListener('click', setQuote);
+    function checkQuote(temp_quote) {
+        // get last 50 quotes
+        let temp_arr_quotes = setTempArr();
+
+        if (!quotes.includes(temp_arr_quotes)) {
+            quotes.push(temp_quote);
+        } else {
+            setQuote();
+            return;
+        }
+        // quote.textContent = 
+    }
+
+
 
 
 
