@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Ron</title>
+</head>
+<body>
+    <blockquote>
+        <em id="quote"></em>
+    </blockquote>
+
+    <p>
+        <button id="get-quote">More Ron</button>
+    </p>
+</body>
+
+<script>
+    let quote = document.querySelector('#quote');
+    let btn = document.querySelector('#get-quote');
+
+    function setQuote() {
+        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
+            // the api call was successful!
+            if (response.ok) {
+                return response.json();
+            }
+            // there was an error
+            return Promise.reject(response);
+
+        }).then(function (data) {
+            // console.log(data);
+            quote.textContent = data;
+        }).catch(function (err) {
+            console.warn('Something went wrong.', err);
+        });
+    }
+
+    setQuote();
+
+    btn.addEventListener('click', setQuote);
+
+
+
+</script>
+</html>
