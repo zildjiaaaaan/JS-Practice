@@ -25,47 +25,38 @@
 
     let quote = document.querySelector('#quote');
     let btn = document.querySelector('#get-quote');
-    let temp_quote = '';
     let quotes = [];
 
-    // get last 50 quotes
-    const setTempArr = () => {
-        let len = quotes.length;
-        if (len) {
-            return quotes.slice(len-50, len);
-        }
-        // return quotes;
-    }
-
-    // fetch quote
-    const fetchQuote = () => {
-        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then((response) => {
+    // fetch
+    function getQuote() {
+        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function (response) {
             if (response.ok) {
-                temp_quote = response.json();
-                return temp_quote;
+                return response.json();
             }
             throw response.status;
-        }).catch((err) => {
-            quote.textContent = "ERROR";
+        }).then(function(data) {
+            
+            if (quotes.length > 49) {
+                quotes.shift();
+            }
+
+            if (quotes.includes(data[0])) {
+                getQuote();
+                return;
+            }
+
+            quote.textContent = data[0];
+            quotes.push(data[0]);
+
+        }).catch(function(err) {
+            quote.textContent = '[Something went wrong, sorry!]';
         });
     }
 
-    const checkQuote = (temp_quote) => {
-        let temp_arr_quotes = setTempArr();
-        if (!temp_arr_quotes.includes(temp_quote)) {
-            fetchQuote.then = (data) => {
-                quote.textContent = data;
-                quotes.push(data);
-            }
-        } else {
+    getQuote();
 
-        }
-    }
-
-    btn.addEventListener('click', () => {
-        fetchQuote();
-        checkQuote(temp_quote);
-    });
+    btn.addEventListener('click', getQuote);
+    
 
 </script>
 </html>
