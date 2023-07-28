@@ -6,52 +6,65 @@
     <title>Random Ron</title>
 </head>
 <body>
-    <blockquote>
-        <em id="quote"></em>
-    </blockquote>
-
     <p>
         <button id="get-quote">More Ron</button>
     </p>
+    <blockquote>
+        <em id="quote"></em>
+    </blockquote>    
 </body>
 
 <script>
     // https://ron-swanson-quotes.herokuapp.com/v2/quotes
-    // set empty array
-    // fetch
-        // check data if not inside array
-            // if true, add
-            // if false, skip
 
     let quote = document.querySelector('#quote');
     let btn = document.querySelector('#get-quote');
     let quotes = [];
 
     // fetch
-    function getQuote() {
-        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-            throw response.status;
-        }).then(function(data) {
-            
-            if (quotes.length > 49) {
-                quotes.shift();
-            }
+    async function getQuote(){}
 
-            if (quotes.includes(data[0])) {
-                getQuote();
-                return;
-            }
+    // check if data is inside quotes array
+    function chkDuplicate(data) {
 
-            quote.textContent = data[0];
-            quotes.push(data[0]);
+        // quotes array should only have 49 length
+        if (quotes.length > 9) {
+            // delete first
+            quotes.shift();
+        }
+        
+        // check if data[0] is already inside the quotes array
+        if (quotes.includes(data[0])) {
+            // recursively run getQuote;
+            getQuote();
+            return;
+        }
 
-        }).catch(function(err) {
-            quote.textContent = '[Something went wrong, sorry!]';
-        });
+        quote.textContent = data[0];
+        quotes.push(data[0]);
     }
+
+    async function getQuote() {
+
+        try {
+            // fetch quote
+            let response = await fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes');
+
+            // check if api call is ok
+            if (!response.ok) throw response.status;
+
+            // get data from api call
+            let data = await response.json();
+            if (!data) throw 'No data';
+
+            // check duplicate 
+            chkDuplicate(data);
+            
+        } catch (error) {
+            console.warn(error);
+        }
+    }
+    
 
     getQuote();
 
