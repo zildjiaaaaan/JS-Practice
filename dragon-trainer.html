@@ -6,19 +6,43 @@
     <title>Dragon Trainer Articles</title>
 </head>
 <body>
-    <div id="app"><div>
+    <div id="app">
+        <article>
+            <h3>All Was Burned</h3>
+            <em>Published on July 30, 2023 by someone</em>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non eaque molestiae cumque neque expedita necessitatibus nemo? Suscipit harum molestiae, error repellat, sunt itaque iste nemo, illum quam necessitatibus temporibus aliquam!</p>
+        </article>
+    <div>
 </body>
 <script>
-    let app = document.querySelector('#app');
-    // let articles = [];
+    // https://vanillajsacademy.com/api/dragons.json
+    // https://vanillajsacademy.com/api/dragons-author.json
+    // json/dragons.json
 
+
+    let app = document.querySelector('#app');
+    let authors = [];
+
+    // Catch errors
     function renderFail() {
-        app.innerHTML = "<h3>All Was Burned</h3"
+        app.innerHTML = "<h3>All Was Burned</h3>"
         app.innerHTML += "<em>Published on July 30, 2023 by someone</em>";
         app.innerHTML += "<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non eaque molestiae cumque neque expedita necessitatibus nemo? Suscipit harum molestiae, error repellat, sunt itaque iste nemo, illum quam necessitatibus temporibus aliquam!</p>"
     }
+
+    // Render author bio if it exists
+    function renderAuthor(author_key) {
+        let author = authors.find((author) => {
+            return author.author === author_key;
+        });
+
+        if (author) {
+
+        }
+    }
         
-    function render(articles_obj) {
+    // Render articles
+    function renderArticles(articles_obj) {
 
         if (!articles_obj || articles_obj < 1) {
             renderFail();
@@ -26,29 +50,38 @@
         }
 
         let i = 0;
+        let author = '';
         app.innerHTML = articles_obj.map((article) => {
             i++;
+            author = article.author;
             return `<article><a href="${article.url}"><h3>#${i}: ${article.title}</h3></a><em>Published on ${article.pubdate} by ${article.author}</em><p>${article.article}</p></article>`;
         }).join('');
+
+        renderAuthor(author);
     }
 
-    async function getArticle() {
-        try {
-            let response = await fetch('https://vanillajsacademy.com/api/dragons.json');
-            if (!response.ok) {
+    // Fetch article
+    function getArticle() {
+        Promise.all([
+            fetch('json/dragons.json'),
+            fetch('json/dragons-author.json')
+        ]).then((responses) => {
+            return Promise.all(responses.map((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
                 throw response.status;
-                renderFail();
-            };
-
-            let data = await response.json();
-            render(data.articles);
-        } catch (error) {
+            }))
+        }).then((data) => {
+            console.log(data);
+            authors = data[1].authors;
+        }).catch((error) => {
             console.warn(error);
-            renderFail();
-        }
+        });
     }
 
     getArticle();
     
 </script>
 </html>
+
