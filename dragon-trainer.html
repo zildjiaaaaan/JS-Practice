@@ -4,24 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon Trainer Articles</title>
+    <style>
+        #author {
+            background: #aaaaaa;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 70%;
+            margin: 0 auto;
+        }
+        a, a:visited {
+            text-decoration: none;
+            color: blue;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <article>
-            <h3>All Was Burned</h3>
-            <em>Published on July 30, 2023 by someone</em>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non eaque molestiae cumque neque expedita necessitatibus nemo? Suscipit harum molestiae, error repellat, sunt itaque iste nemo, illum quam necessitatibus temporibus aliquam!</p>
-        </article>
     <div>
 </body>
 <script>
     // https://vanillajsacademy.com/api/dragons.json
     // https://vanillajsacademy.com/api/dragons-author.json
-    // json/dragons.json
-
 
     let app = document.querySelector('#app');
-    let authors = [];
 
     // Catch errors
     function renderFail() {
@@ -31,33 +36,26 @@
     }
 
     // Render author bio if it exists
-    function renderAuthor(author_key) {
-        let author = authors.find((author) => {
-            return author.author === author_key;
+    function getAuthor(author_key, authors_obj) {
+        return authors_obj.find((authors) => {
+            return authors.author === author_key;
         });
-
-        if (author) {
-
-        }
     }
         
     // Render articles
-    function renderArticles(articles_obj) {
+    function render(articles_obj, authors_obj) {
 
         if (!articles_obj || articles_obj < 1) {
             renderFail();
             return;
         }
 
-        let i = 0;
-        let author = '';
         app.innerHTML = articles_obj.map((article) => {
-            i++;
-            author = article.author;
-            return `<article><a href="${article.url}"><h3>#${i}: ${article.title}</h3></a><em>Published on ${article.pubdate} by ${article.author}</em><p>${article.article}</p></article>`;
+            let authors = getAuthor(article.author, authors_obj);
+            let render = `<article><a href="${article.url}"><h3>${article.title}</h3></a><em>Published on ${article.pubdate} by ${article.author}</em><p>${article.article}</p></article>`;
+            render += `<article id="author"><h3>${authors.author}</h3><p>${authors.bio}</p></article>`;
+            return render;
         }).join('');
-
-        renderAuthor(author);
     }
 
     // Fetch article
@@ -73,10 +71,10 @@
                 throw response.status;
             }))
         }).then((data) => {
-            console.log(data);
-            authors = data[1].authors;
+            render(data[0].articles, data[1].authors);
         }).catch((error) => {
             console.warn(error);
+            renderFail();
         });
     }
 
