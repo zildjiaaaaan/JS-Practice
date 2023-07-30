@@ -6,25 +6,46 @@
     <title>Dragon Trainer Articles</title>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app"><div>
 </body>
 <script>
     let app = document.querySelector('#app');
     // let articles = [];
 
-    function render(articles) {
-        app.innerHTML = `<ul>${
-            articles.map((article) => {
-                return `<li>${article}</li>`;
-            }).join('')
-        }</ul>`;
+    function renderFail() {
+        app.innerHTML = "<h3>All Was Burned</h3"
+        app.innerHTML += "<em>Published on July 30, 2023 by someone</em>";
+        app.innerHTML += "<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non eaque molestiae cumque neque expedita necessitatibus nemo? Suscipit harum molestiae, error repellat, sunt itaque iste nemo, illum quam necessitatibus temporibus aliquam!</p>"
+    }
+        
+    function render(articles_obj) {
+
+        if (!articles_obj || articles_obj < 1) {
+            renderFail();
+            return;
+        }
+
+        let i = 0;
+        app.innerHTML = articles_obj.map((article) => {
+            i++;
+            return `<article><a href="${article.url}"><h3>#${i}: ${article.title}</h3></a><em>Published on ${article.pubdate} by ${article.author}</em><p>${article.article}</p></article>`;
+        }).join('');
     }
 
     async function getArticle() {
-        let response = await fetch('https://vanillajsacademy.com/api/dragons.json');
-        if (!response.ok) throw response.status;
-        let data = await response.json(); 
-        render(data.articles);
+        try {
+            let response = await fetch('https://vanillajsacademy.com/api/dragons.json');
+            if (!response.ok) {
+                throw response.status;
+                renderFail();
+            };
+
+            let data = await response.json();
+            render(data.articles);
+        } catch (error) {
+            console.warn(error);
+            renderFail();
+        }
     }
 
     getArticle();
