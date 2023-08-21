@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS</title>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // let div = document.querySelector('#app');
+
+    // div.innerHTML = `<img src=x onerror="alert('XSS Attack')">`;
+
+    // div.innerHTML = `<a href="javascript:alert('Another XSS Attack')">Click Me</a>`;
+
+    // div.textContent = `<img src=x onerror="alert('XSS Attack')">`;
+
+    // Create your element
+    // let content = document.createElement('h1');
+
+    // Add your content
+    // content.textContent = `<img src=x onerror="alert('XSS Attack')">`;
+
+    // Get the node to inject your content into
+    // let app = document.querySelector('#app');
+
+    // Insert the content into the app
+    // app.append(content);
+    // app.innerHTML = '';
+
+
+    // A dangerous URL
+    let url = `javascript:alert('Another XSS Attack')`;
+
+    // Create the link
+    let link = document.createElement('a');
+
+    // Add your content
+    link.textContent = `Click Me`;
+
+    // Sanitize and add the URL
+    link.href = url.replace(/javascript:/gi, '');
+
+    // Get the node to inject your content into
+    let app = document.querySelector('#app');
+
+    // Insert the content into the app
+    app.append(link);
+</script>
+</html>
