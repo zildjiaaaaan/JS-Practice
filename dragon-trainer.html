@@ -1,85 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon Trainer Articles</title>
-    <style>
-        #author {
-            background: #aaaaaa;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 70%;
-            margin: 0 auto;
-        }
-        a, a:visited {
-            text-decoration: none;
-            color: blue;
-        }
-    </style>
-</head>
-<body>
-    <div id="app">
-    <div>
-</body>
-<script>
-    // https://vanillajsacademy.com/api/dragons.json
-    // https://vanillajsacademy.com/api/dragons-author.json
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Dragon Trainer Monthly - XSS</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    let app = document.querySelector('#app');
+		<style type="text/css">
+			body {
+				margin: 0 auto;
+				max-width: 40em;
+				width: 88%;
+			}
 
-    // Catch errors
-    function renderFail() {
-        app.innerHTML = "<h3>All Was Burned</h3>"
-        app.innerHTML += "<em>Published on July 30, 2023 by someone</em>";
-        app.innerHTML += "<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non eaque molestiae cumque neque expedita necessitatibus nemo? Suscipit harum molestiae, error repellat, sunt itaque iste nemo, illum quam necessitatibus temporibus aliquam!</p>"
-    }
+			article {
+				margin-bottom: 3em;
+			}
+		</style>
+	</head>
+	<body>
 
-    // Render author bio if it exists
-    function getAuthor(author_key, authors_obj) {
-        return authors_obj.find((authors) => {
-            return authors.author === author_key;
-        });
-    }
-        
-    // Render articles
-    function render(articles_obj, authors_obj) {
+		<h1>Dragon Trainer Monthly - XSS</h1>
 
-        if (!articles_obj || articles_obj < 1) {
-            renderFail();
-            return;
-        }
+		<div id="app"></div>
 
-        app.innerHTML = articles_obj.map((article) => {
-            let authors = getAuthor(article.author, authors_obj);
-            let render = `<article><a href="${article.url}"><h3>${article.title}</h3></a><em>Published on ${article.pubdate} by ${article.author}</em><p>${article.article}</p></article>`;
-            render += `<article id="author"><h3>${authors.author}</h3><p>${authors.bio}</p></article>`;
-            return render;
-        }).join('');
-    }
 
-    // Fetch article
-    function getArticle() {
-        Promise.all([
-            fetch('json/dragons.json'),
-            fetch('json/dragons-author.json')
-        ]).then((responses) => {
-            return Promise.all(responses.map((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw response.status;
-            }))
-        }).then((data) => {
-            render(data[0].articles, data[1].authors);
-        }).catch((error) => {
-            console.warn(error);
-            renderFail();
-        });
-    }
+		<script>
+			// Get the app element
+			let app = document.querySelector('#app');
 
-    getArticle();
-    
-</script>
+			/**
+			 * Sanitize an HTML string
+			 * @param  {String}          str   The HTML string to sanitize
+			 * @param  {Boolean}         nodes If true, returns HTML nodes instead of a string
+			 * @return {String|NodeList}       The sanitized string or nodes
+			 */
+			function cleanHTML (str, nodes) {
+
+				/**
+				 * Convert the string to an HTML document
+				 * @return {Node} An HTML document
+				 */
+				function stringToHTML () {
+					let parser = new DOMParser();
+					let doc = parser.parseFromString(str, 'text/html');
+					return doc.body || document.createElement('body');
+				}
+
+				/**
+				 * Remove <script> elements
+				 * @param  {Node} html The HTML
+				 */
+				function removeScripts (html) {
+					let scripts = html.querySelectorAll('script');
+					for (let script of scripts) {
+						script.remove();
+					}
+				}
+
+				/**
+				 * Check if the attribute is potentially dangerous
+				 * @param  {String}  name  The attribute name
+				 * @param  {String}  value The attribute value
+				 * @return {Boolean}       If true, the attribute is potentially dangerous
+				 */
+				function isPossiblyDangerous (name, value) {
+					let val = value.replace(/\s+/g, '').toLowerCase();
+					if (['src', 'href', 'xlink:href'].includes(name)) {
+						if (val.includes('javascript:') || val.includes('data:')) return true;
+					}
+					if (name.startsWith('on')) return true;
+				}
+
+				/**
+				 * Remove potentially dangerous attributes from an element
+				 * @param  {Node} elem The element
+				 */
+				function removeAttributes (elem) {
+
+					// Loop through each attribute
+					// If it's dangerous, remove it
+					let atts = elem.attributes;
+					for (let {name, value} of atts) {
+						if (!isPossiblyDangerous(name, value)) continue;
+						elem.removeAttribute(name);
+					}
+
+				}
+
+				/**
+				 * Remove dangerous stuff from the HTML document's nodes
+				 * @param  {Node} html The HTML document
+				 */
+				function clean (html) {
+					let nodes = html.children;
+					for (let node of nodes) {
+						removeAttributes(node);
+						clean(node);
+					}
+				}
+
+				// Convert the string to HTML
+				let html = stringToHTML();
+
+				// Sanitize it
+				removeScripts(html);
+				clean(html);
+
+				// If the user wants HTML nodes back, return them
+				// Otherwise, pass a sanitized string back
+				return nodes ? html.childNodes : html.innerHTML;
+
+			}
+
+			/**
+			 * Find the first matching author
+			 * @param  {String} name    The author name
+			 * @param  {Array}  authors The author details
+			 * @return {Array}          The author
+			 */
+			function getAuthor (name, authors) {
+				return authors.find(function (author) {
+					return author.author === name;
+				});
+			}
+
+			/**
+			 * Render an error message if fetch fails
+			 */
+			function renderFail () {
+				app.innerHTML = '<p>The dragons burned all the copies. Unable to get new articles at this time. Sorry!</p>';
+			}
+
+			/**
+			 * Render articles into the DOM
+			 * @param  {Array} articles The articles to render
+			 * @param  {Array} authors  The author details
+			 */
+			function render (articles, authors) {
+
+				// If there are no articles to show
+				if (!articles || articles.length < 1) {
+					renderFail();
+					return;
+				}
+
+				// Create a new array of markup strings with array.map(), then
+				// Combine them into one string with array.join(), then
+				// Insert them into the DOM with innerHTML
+				app.innerHTML = cleanHTML(articles.map(function (article) {
+					let author = getAuthor(article.author, authors);
+					return `
+						<article>
+							<h2><a href="${article.url}">${article.title}</a></h2>
+							<p><em>By ${author ? `${author.author} - ${author.bio}` : article.author}</em></p>
+							<p>${article.article}</p>
+						</article>`;
+				}).join(''));
+
+			}
+
+			// Get articles
+			Promise.all([
+				fetch('https://vanillajsacademy.com/api/dragons.json'),
+				fetch('https://vanillajsacademy.com/api/dragons-authors.json'),
+			]).then(function (responses) {
+				return Promise.all(responses.map(function (response) {
+					return response.json();
+				}));
+			}).then(function (data) {
+
+				// Render them into the DOM
+				render(data[0].articles, data[1].authors);
+
+			}).catch(function (error) {
+				console.warn(error);
+				renderFail();
+			});
+		</script>
+	</body>
 </html>
-
