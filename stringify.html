@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // Save an object
+        let lunch = {
+            sandwich: 'turkey',
+            chips: 'Cape Cod',
+            drink: 'Pepsi'
+        };
+        localStorage.setItem('lunchOrder', JSON.stringify(lunch));
+
+        // Save an array
+        let drinks = ['Pepsi', 'water', 'lemonade'];
+        localStorage.setItem('drinkOptions', JSON.stringify(drinks));
+
+        // Get data from local storage
+        let savedLunch = JSON.parse(localStorage.getItem('lunchOrder'));
+        let savedDrinks = JSON.parse(localStorage.getItem('drinkOptions'));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
